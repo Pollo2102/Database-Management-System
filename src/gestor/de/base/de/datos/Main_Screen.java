@@ -22,6 +22,7 @@ public class Main_Screen extends javax.swing.JFrame {
         initComponents();
         dbm = D;
         LGS = LG;
+        this.setVisible(true);
     }
 
     /**
@@ -44,23 +45,32 @@ public class Main_Screen extends javax.swing.JFrame {
         ShowTable_Button = new javax.swing.JButton();
         Create_Tab = new javax.swing.JPanel();
         DDL_Tab = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
+        DBConnections_Tab = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setSize(new java.awt.Dimension(1000, 650));
 
+        Main_TabbedPane.setForeground(new java.awt.Color(204, 204, 204));
         Main_TabbedPane.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         Main_TabbedPane.setName(""); // NOI18N
 
+        Show_Tab.setForeground(new java.awt.Color(60, 63, 65));
+        Show_Tab.setOpaque(false);
+
         Show_ComboBox.setMaximumRowCount(7);
-        Show_ComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tables", "Indexes", "Functions", "Triggers", "Users & Databases", "Views" }));
+        Show_ComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tables", "Indexes", "Triggers", "Users & Databases", "Views" }));
 
         Show_Button.setText("Show");
         Show_Button.setToolTipText("Show a table's contents");
+        Show_Button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                Show_ButtonMouseClicked(evt);
+            }
+        });
 
-        Show_Table.setAutoCreateRowSorter(true);
         Show_Table.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         Show_Table.setFont(new java.awt.Font("Dialog", 0, 16)); // NOI18N
+        Show_Table.setForeground(new java.awt.Color(0, 0, 0));
         Show_Table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -72,8 +82,10 @@ public class Main_Screen extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        Show_Table.setColumnSelectionAllowed(true);
+        Show_Table.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        Show_Table.setOpaque(false);
         Show_Table.setRowHeight(30);
+        Show_Table.setRowSelectionAllowed(false);
         Show_TablePane.setViewportView(Show_Table);
 
         ShowModify_Button.setText("Edit");
@@ -84,6 +96,11 @@ public class Main_Screen extends javax.swing.JFrame {
 
         ShowTable_Button.setText("Show Table");
         ShowTable_Button.setToolTipText("If it is a Table, shows the selected table.");
+        ShowTable_Button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ShowTable_ButtonMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout Show_TabLayout = new javax.swing.GroupLayout(Show_Tab);
         Show_Tab.setLayout(Show_TabLayout);
@@ -117,7 +134,7 @@ public class Main_Screen extends javax.swing.JFrame {
                     .addComponent(Show_Button))
                 .addGap(18, 18, 18)
                 .addComponent(Show_TablePane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                 .addGroup(Show_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ShowModify_Button)
                     .addComponent(ShowDelete_Button)
@@ -153,18 +170,18 @@ public class Main_Screen extends javax.swing.JFrame {
 
         Main_TabbedPane.addTab("DDL", DDL_Tab);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout DBConnections_TabLayout = new javax.swing.GroupLayout(DBConnections_Tab);
+        DBConnections_Tab.setLayout(DBConnections_TabLayout);
+        DBConnections_TabLayout.setHorizontalGroup(
+            DBConnections_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 994, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        DBConnections_TabLayout.setVerticalGroup(
+            DBConnections_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 618, Short.MAX_VALUE)
         );
 
-        Main_TabbedPane.addTab("DB Connections", jPanel1);
+        Main_TabbedPane.addTab("DB Connections", DBConnections_Tab);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -179,6 +196,43 @@ public class Main_Screen extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void ShowTable_ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ShowTable_ButtonMouseClicked
+        
+    }//GEN-LAST:event_ShowTable_ButtonMouseClicked
+
+    private void Show_ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Show_ButtonMouseClicked
+        int option = Show_ComboBox.getSelectedIndex();
+        
+        /*
+            0 - Tables
+            1 - Indexes
+            2 - Triggers
+            3 - Users & Databases
+            4 - Views
+        */
+        try {
+            
+            if (option == 0) {
+                dbm.populateTable(Show_Table, dbm.showTables());
+            }
+            else if (option == 1) {
+                dbm.populateTable(Show_Table, dbm.showIndexes());
+            }
+            else if (option == 2) {
+                dbm.populateTable(Show_Table, dbm.showTriggers());
+            }
+            else if (option == 3) {
+                dbm.populateTable(Show_Table, dbm.showUsers_Schema());
+            }
+            else if (option == 4) {
+                dbm.populateTable(Show_Table, dbm.showViews());
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_Show_ButtonMouseClicked
 
     /**
      * @param args the command line arguments
@@ -217,6 +271,7 @@ public class Main_Screen extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Create_Tab;
+    private javax.swing.JPanel DBConnections_Tab;
     private javax.swing.JPanel DDL_Tab;
     private javax.swing.JTabbedPane Main_TabbedPane;
     private javax.swing.JButton ShowDelete_Button;
@@ -227,6 +282,5 @@ public class Main_Screen extends javax.swing.JFrame {
     private javax.swing.JPanel Show_Tab;
     private javax.swing.JTable Show_Table;
     private javax.swing.JScrollPane Show_TablePane;
-    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

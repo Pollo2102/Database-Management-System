@@ -1,8 +1,12 @@
 package gestor.de.base.de.datos;
 
+import java.awt.Window;
 import java.sql.*;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Vector;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 import org.h2.Driver;
 
 /**
@@ -12,7 +16,9 @@ import org.h2.Driver;
 public class Database_Manager {
     
     private String currUsername, currPassword;
-    Connection conn;
+    Connection conn = null;
+    PreparedStatement statement = null;
+    ResultSet res = null;
     
     /* Database used is H2 */
     public Database_Manager(String username, String password) throws Exception{
@@ -81,24 +87,40 @@ public class Database_Manager {
         return generatedString;
     }
     
+    public String stringForTable(String fieldNames [], String type []) {
+        String generatedString = "";
+        
+        for (int i = 0; i < fieldNames.length; i++) {
+            if (i == fieldNames.length - 1) {
+                generatedString += (fieldNames[i] + "(" + type[i] + ")");
+            }else {
+                generatedString += (fieldNames[i] + "(" + type[i] + "), ");
+            }
+        }
+        
+        return generatedString;
+    }
+    
     ////////////////////////// TABLES ////////////////////////////////////
-    public String showTables(String schemaName) {
+    public String showTables() {
         String sqlStatement = 
-                String.format("SELECT * FROM %s.tables;", schemaName);
+                String.format("SELECT * FROM INFORMATION_SCHEMA.TABLES "
+                        + "order by TABLE_SCHEMA desc;");
                         
         return sqlStatement;
     }
     
-    public String createTables(String tableName, String values) {
+    public String createTables(String values) {
         String sqlStatement = 
-                String.format("CREATE TABLE %s(%s)",tableName, values);
+                String.format("CREATE TABLE %s;",values);
         
         return sqlStatement;
     }
     
-    public String updateTables() {
+    public String updateTables(String tableName, String columnName, String newData) {
         String sqlStatement = 
-                String.format("");
+                String.format("ALTER TABLE %s ALTER COLUMN %s %s;", 
+                        tableName, columnName, newData);
         
         return sqlStatement;
     }
@@ -112,9 +134,9 @@ public class Database_Manager {
     
     ////////////////////////// INDEXES ///////////////////////////////////
     
-    public String showIndexes(String schemaName) {
+    public String showIndexes() {
         String sqlStatement =
-                String.format("SELECT * FROM %s.indexes;", schemaName);
+                String.format("SELECT * FROM INFORMATION_SCHEMA.INDEXES");
         
         return sqlStatement;
     }
@@ -140,42 +162,13 @@ public class Database_Manager {
         
         return sqlStatement;
     }
-    
-    ////////////////////////// FUNCTIONS ////NOT//// /////////////////////////////////
-    
-    public String showFunctions(String schemaName) {
-        String sqlStatement = 
-                String.format("SELECT * FROM %s.function_aliases;", schemaName);
-        
-        return sqlStatement;
-    }
-    
-    public String createFunction() {
-        String sqlStatement = 
-                String.format("");
-        
-        return sqlStatement;
-    }
-    
-    public String updateFunction() {
-        String sqlStatement = 
-                String.format("");
-        
-        return sqlStatement;
-    }
-    
-    public String deleteFunction(String aliasName) {
-        String sqlStatement = 
-                String.format("DROP ALIAS %s;", aliasName);
-        
-        return sqlStatement;
-    }
+   
     
     ////////////////////////// TRIGGERS //////////////////////////////////
     
-    public String showTriggers(String schemaName) {
+    public String showTriggers() {
         String sqlStatement = 
-                String.format("SELECT * FROM %s.triggers;", schemaName);
+                String.format("SELECT * FROM INFORMATION_SCHEMA.TRIGGERS;");
         
         return sqlStatement;
     }
@@ -206,7 +199,9 @@ public class Database_Manager {
     //Check the sqlStatement for the query
     public String showUsers_Schema() {
         String sqlStatement = 
-                String.format("SELECT * FROM INFORMATION_SCHEMA.USERS;");
+                String.format("SELECT * FROM INFORMATION_SCHEMA.USERS a "
+                        + "inner join information_SCHEMA.SCHEMATA b "
+                        + "on b.SCHEMA_OWNER = a.NAME;");
         
         return sqlStatement;
     }
@@ -219,7 +214,7 @@ public class Database_Manager {
         return sqlStatement;
     }
     
-    public String updateUserAdmin(String userName, bool adminRights) {
+    public String updateUserAdmin(String userName, boolean adminRights) {
         String adminRightsString;
         if (adminRights)
             adminRightsString = "TRUE";
@@ -227,7 +222,7 @@ public class Database_Manager {
             adminRightsString = "FALSE";
 
         String sqlStatement = 
-                String.format("ALTER USER %s ADMIN %s;", username, adminRightsString);
+                String.format("ALTER USER %s ADMIN %s;", userName, adminRightsString);
         
         return sqlStatement;
     }
@@ -285,9 +280,9 @@ public class Database_Manager {
     
     ////////////////////////// VIEWS /////////////////////////////////////
     
-    public String showViews(String schemaName) {
+    public String showViews() {
         String sqlStatement = 
-                String.format("SELECT * FROM %s.views;", schemaName);
+                String.format("SELECT * FROM INFORMATION_SCHEMA.VIEWS;");
         
         return sqlStatement;
     }
@@ -317,10 +312,101 @@ public class Database_Manager {
         return sqlStatement;
     }
     
+    
+    ////////////////////////// SESSIONS //////////////////////////////////
+    
+    
+    
+    
     //////////////////////////////////////////////////////////////////////
     ////////////////// END OF STRING CREATION FUNCTIONS //////////////////
     //////////////////////////////////////////////////////////////////////
     
     
+    public void populateTable(JTable mainTable, String sqlStatement) throws Exception {
+        Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+        Vector columns = new Vector();
+        statement = conn.prepareStatement(sqlStatement);
+        res = statement.executeQuery();
+        ResultSetMetaData metaData = res.getMetaData();
+
+        // names of columns
+        Vector<String> columnNames = new Vector<String>();
+        int columnCount = metaData.getColumnCount();
+        for (int column = 1; column <= columnCount; column++) {
+            columnNames.add(metaData.getColumnName(column));
+            columns.add(columnNames.get(column - 1));
+        }
+        // data of the table
+        while (res.next()) {
+            Vector<Object> vector = new Vector<Object>();
+            for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+                vector.add(res.getObject(columnIndex));
+            }
+            data.add(vector);
+        }
+        
+        DefaultTableModel tableModel = new DefaultTableModel(data, columns);
+        mainTable.setModel(tableModel);
+        
+        statement.close();
+        res.close();
+    } 
+
+
+    
+    
+    /*
+    public void populateTable(JTable mainTable, String sqlStatement) throws Exception{
+        
+        statement = conn.prepareStatement(sqlStatement);
+        
+        DefaultTableModel dtm = new DefaultTableModel();      
+        try{
+            res = statement.executeQuery();
+            ResultSetMetaData meta = res.getMetaData();
+            Vector<String> columnNames = new Vector<String>();
+            int numberOfColumns = meta.getColumnCount();
+            for (int column = 1; column <= numberOfColumns; column++) {
+                columnNames.add(meta.getColumnName(column));
+            }
+            while (res.next())
+            {
+                Object [] rowData = new Object[numberOfColumns];
+                for (int i = 0; i < rowData.length; ++i)
+                {
+                    rowData[i] = res.getObject(i+1);
+                }
+                dtm.addRow(rowData);
+            }
+            mainTable.setModel(dtm);
+            dtm.fireTableDataChanged();
+            dtm.fireTableStructureChanged();
+            //////////////////////////
+
+        }
+        catch(Exception e){
+            System.err.println(e);
+            e.printStackTrace();
+        }
+        finally{
+            try{
+                res.close();
+                statement.close();
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+    }*/
+    
+    public void createStatement(String sqlStatement) {
+        try {
+            statement = conn.prepareStatement(sqlStatement);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     
 }

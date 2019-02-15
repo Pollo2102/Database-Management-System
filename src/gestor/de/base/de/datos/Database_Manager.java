@@ -112,6 +112,13 @@ public class Database_Manager {
                         
         return sqlStatement;
     }
+
+    public String showTable(String schemaName, String tableName) {
+        String sqlStatement = 
+                String.format("SELECT * FROM %s.%s;", schemaName, tableName);
+                        
+        return sqlStatement;
+    }
     
     public String createTables(String values) {
         String sqlStatement = 
@@ -154,7 +161,7 @@ public class Database_Manager {
     
     public String updateIndex(String oldIndexName, String newIndexName) {
         String sqlStatement = 
-                String.format("ALTER INDEX %s RENAME TO %s", oldIndexName, newIndexName);
+                String.format("ALTER INDEX %s RENAME TO %s;", oldIndexName, newIndexName);
         
         return sqlStatement;
     }

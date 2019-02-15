@@ -702,7 +702,22 @@ public class Main_Screen extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void ShowTable_ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ShowTable_ButtonMouseClicked
+        String tableName = 
+                Show_Table.getValueAt(Show_Table.getSelectedRow(), 2)
+                        .toString();
         
+        String schemaName = 
+                Show_Table.getValueAt(Show_Table.getSelectedRow(), 1)
+                        .toString();
+        
+        int option = Show_ComboBox.getSelectedIndex();
+        try {
+            if (option == 0) {
+                dbm.populateTable(Show_Table, dbm.showTable(schemaName, tableName));
+            }            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_ShowTable_ButtonMouseClicked
 
     private void Show_ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Show_ButtonMouseClicked
@@ -744,8 +759,6 @@ public class Main_Screen extends javax.swing.JFrame {
         String selectedText = 
                 Show_Table.getValueAt(Show_Table.getSelectedRow(), 2)
                         .toString();
-        int selectedRow = 
-                Show_Table.getSelectedRow();
         
         int selectedColumn = 
                 Show_Table.getSelectedColumn();
@@ -771,10 +784,10 @@ public class Main_Screen extends javax.swing.JFrame {
                 dbm.executeSQL(dbm.deleteTrigger(selectedText));
             }
             else if (selectedIndex == 3 && selectedColumn == 0) {
-                dbm.executeSQL(dbm.deleteUser(selectedText));
+                dbm.executeSQL(dbm.deleteUser(username));
             }
             else if (selectedIndex == 3 && selectedColumn == 5) {
-                dbm.executeSQL(dbm.deleteSchema(selectedText));
+                dbm.executeSQL(dbm.deleteSchema(schemaName));
             }
             else if (selectedIndex == 4) {
                 dbm.executeSQL(dbm.deleteView(selectedText));

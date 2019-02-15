@@ -415,19 +415,12 @@ public class Database_Manager {
         res.close();
     } 
     
-    public void deleteElement(String sqlStatement) throws Exception {
+    public void executeSQLQuery(String sqlStatement) throws Exception {
         statement = conn.prepareStatement(sqlStatement);
         statement.executeQuery();
         statement.close();
     }
     
-    public void createStatement(String sqlStatement) {
-        try {
-            statement = conn.prepareStatement(sqlStatement);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    
     
 }

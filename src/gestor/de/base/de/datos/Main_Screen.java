@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gestor.de.base.de.datos;
 
 /**
@@ -10,10 +5,6 @@ package gestor.de.base.de.datos;
  * @author diego
  */
 public class Main_Screen extends javax.swing.JFrame {
-
-    /**
-     * Creates new form Main_Screen
-     */
     
     Database_Manager dbm;
     Login_Screen LGS;
@@ -35,11 +26,15 @@ public class Main_Screen extends javax.swing.JFrame {
                 "SELECT * FROM INFORMATION_SCHEMA.USERS;");
         dbm.populateComboBox(createIndex_TableBox, "SHOW TABLES;");
         dbm.populateComboBox(createIndex_ComboBox, "SELECT COLUMN_NAME  "
-                + "FROM INFORMATION_SCHEMA.COLUMNS A INNER JOIN "
-                + "INFORMATION_SCHEMA.TABLES B ON A.TABLE_NAME = B.TABLE_NAME "
-                + "WHERE A.TABLE_SCHEMA != 'INFORMATION_SCHEMA' "
-                + "AND A.TABLE_NAME = " + createIndex_TableBox
-                        .getSelectedItem().toString() + ";");
+                    + "FROM INFORMATION_SCHEMA.COLUMNS A INNER JOIN "
+                    + "INFORMATION_SCHEMA.TABLES B ON A.TABLE_NAME = B.TABLE_NAME "
+                    + "WHERE A.TABLE_SCHEMA != 'INFORMATION_SCHEMA' "
+                    + "AND A.TABLE_NAME = \'" + createIndex_TableBox
+                            .getSelectedItem().toString() + "\';");
+        dbm.populateComboBox(schemaUpdate_OldNameBox, "SHOW SCHEMAS;");
+        dbm.populateComboBox(updateUser_userBox,
+                "SELECT * FROM INFORMATION_SCHEMA.USERS;");
+        dbm.populateComboBox(updateIndex_ComboBox, dbm.showIndexes());
     }
 
     /**
@@ -89,7 +84,24 @@ public class Main_Screen extends javax.swing.JFrame {
         DDLTable = new javax.swing.JTable();
         ShowSchemaDDL_ComboBox = new javax.swing.JComboBox<>();
         ShowTableDDL_Button = new javax.swing.JButton();
-        DBConnections_Tab = new javax.swing.JPanel();
+        Update_Tab = new javax.swing.JPanel();
+        updateSchema_Tab = new javax.swing.JTabbedPane();
+        indexUpdate_Tab = new javax.swing.JPanel();
+        updateIndex_ComboBox = new javax.swing.JComboBox<>();
+        updateIndex_NewNameField = new javax.swing.JTextField();
+        updateIndex_Button = new javax.swing.JButton();
+        triggerUpdate_Tab = new javax.swing.JPanel();
+        usersUpdate_Tab = new javax.swing.JPanel();
+        updateUser_userBox = new javax.swing.JComboBox<>();
+        updateUser_NewNameField = new javax.swing.JTextField();
+        updateUser_PasswordField = new javax.swing.JPasswordField();
+        updateUser_AdminCheckbox = new javax.swing.JCheckBox();
+        updateUser_Button = new javax.swing.JButton();
+        schemaUpdate_Tab = new javax.swing.JPanel();
+        schemaUpdate_OldNameBox = new javax.swing.JComboBox<>();
+        schemaUpdate_NewNameField = new javax.swing.JTextField();
+        updateSchema_Button = new javax.swing.JButton();
+        viewsUpdate_Tab = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setSize(new java.awt.Dimension(1000, 650));
@@ -117,13 +129,10 @@ public class Main_Screen extends javax.swing.JFrame {
         Show_Table.setForeground(new java.awt.Color(0, 0, 0));
         Show_Table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+
             }
         ));
         Show_Table.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
@@ -192,7 +201,7 @@ public class Main_Screen extends javax.swing.JFrame {
                     .addComponent(updateButton))
                 .addGap(18, 18, 18)
                 .addComponent(Show_TablePane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
                 .addGroup(Show_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ShowModify_Button)
                     .addComponent(ShowDelete_Button)
@@ -204,6 +213,11 @@ public class Main_Screen extends javax.swing.JFrame {
 
         createTab_SubTab.setForeground(new java.awt.Color(102, 102, 102));
         createTab_SubTab.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        createTab_SubTab.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                createTab_SubTabMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout createTable_PanelLayout = new javax.swing.GroupLayout(createTable_Panel);
         createTable_Panel.setLayout(createTable_PanelLayout);
@@ -223,11 +237,21 @@ public class Main_Screen extends javax.swing.JFrame {
 
         createIndex_TableBox.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         createIndex_TableBox.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Table Name", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
+        createIndex_TableBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                createIndex_TableBoxItemStateChanged(evt);
+            }
+        });
 
         createIndex_ComboBox.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         createIndex_ComboBox.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Column Name", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
 
         createIndex_Button.setText("Create");
+        createIndex_Button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                createIndex_ButtonMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout createIndexes_PanelLayout = new javax.swing.GroupLayout(createIndexes_Panel);
         createIndexes_Panel.setLayout(createIndexes_PanelLayout);
@@ -314,6 +338,11 @@ public class Main_Screen extends javax.swing.JFrame {
         createSchema_UsernameBox.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Username", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
 
         createSchema_Button.setText("Create");
+        createSchema_Button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                createSchema_ButtonMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout createSchema_PanelLayout = new javax.swing.GroupLayout(createSchema_Panel);
         createSchema_Panel.setLayout(createSchema_PanelLayout);
@@ -351,6 +380,11 @@ public class Main_Screen extends javax.swing.JFrame {
         createView_comboBox.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Table Name", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
 
         createView_Button.setText("Create");
+        createView_Button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                createView_ButtonMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout createViews_PanelLayout = new javax.swing.GroupLayout(createViews_Panel);
         createViews_Panel.setLayout(createViews_PanelLayout);
@@ -465,18 +499,187 @@ public class Main_Screen extends javax.swing.JFrame {
 
         Main_TabbedPane.addTab("DDL", DDL_Tab);
 
-        javax.swing.GroupLayout DBConnections_TabLayout = new javax.swing.GroupLayout(DBConnections_Tab);
-        DBConnections_Tab.setLayout(DBConnections_TabLayout);
-        DBConnections_TabLayout.setHorizontalGroup(
-            DBConnections_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 994, Short.MAX_VALUE)
+        updateSchema_Tab.setFocusable(false);
+        updateSchema_Tab.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        updateSchema_Tab.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                updateSchema_TabMouseClicked(evt);
+            }
+        });
+
+        indexUpdate_Tab.setFont(new java.awt.Font("Dialog", 0, 16)); // NOI18N
+
+        updateIndex_ComboBox.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Index Name", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
+
+        updateIndex_NewNameField.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "New Index Name", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
+
+        updateIndex_Button.setText("Update");
+        updateIndex_Button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                updateIndex_ButtonMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout indexUpdate_TabLayout = new javax.swing.GroupLayout(indexUpdate_Tab);
+        indexUpdate_Tab.setLayout(indexUpdate_TabLayout);
+        indexUpdate_TabLayout.setHorizontalGroup(
+            indexUpdate_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(indexUpdate_TabLayout.createSequentialGroup()
+                .addGap(113, 113, 113)
+                .addGroup(indexUpdate_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(updateIndex_NewNameField)
+                    .addComponent(updateIndex_ComboBox, 0, 400, Short.MAX_VALUE))
+                .addGap(120, 120, 120)
+                .addComponent(updateIndex_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(180, Short.MAX_VALUE))
         );
-        DBConnections_TabLayout.setVerticalGroup(
-            DBConnections_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 618, Short.MAX_VALUE)
+        indexUpdate_TabLayout.setVerticalGroup(
+            indexUpdate_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(indexUpdate_TabLayout.createSequentialGroup()
+                .addGroup(indexUpdate_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(indexUpdate_TabLayout.createSequentialGroup()
+                        .addGap(73, 73, 73)
+                        .addComponent(updateIndex_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(indexUpdate_TabLayout.createSequentialGroup()
+                        .addGap(130, 130, 130)
+                        .addComponent(updateIndex_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(updateIndex_NewNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(334, Short.MAX_VALUE))
         );
 
-        Main_TabbedPane.addTab("DB Connections", DBConnections_Tab);
+        updateSchema_Tab.addTab("Indexes", indexUpdate_Tab);
+
+        javax.swing.GroupLayout triggerUpdate_TabLayout = new javax.swing.GroupLayout(triggerUpdate_Tab);
+        triggerUpdate_Tab.setLayout(triggerUpdate_TabLayout);
+        triggerUpdate_TabLayout.setHorizontalGroup(
+            triggerUpdate_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 992, Short.MAX_VALUE)
+        );
+        triggerUpdate_TabLayout.setVerticalGroup(
+            triggerUpdate_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 591, Short.MAX_VALUE)
+        );
+
+        updateSchema_Tab.addTab("Trigger", triggerUpdate_Tab);
+
+        updateUser_userBox.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "User", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
+
+        updateUser_NewNameField.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "New Username", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
+
+        updateUser_PasswordField.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "New Password", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
+
+        updateUser_AdminCheckbox.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        updateUser_AdminCheckbox.setText("Admin");
+
+        updateUser_Button.setText("Update");
+        updateUser_Button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                updateUser_ButtonMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout usersUpdate_TabLayout = new javax.swing.GroupLayout(usersUpdate_Tab);
+        usersUpdate_Tab.setLayout(usersUpdate_TabLayout);
+        usersUpdate_TabLayout.setHorizontalGroup(
+            usersUpdate_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(usersUpdate_TabLayout.createSequentialGroup()
+                .addGroup(usersUpdate_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(usersUpdate_TabLayout.createSequentialGroup()
+                        .addGap(130, 130, 130)
+                        .addGroup(usersUpdate_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(updateUser_PasswordField)
+                            .addComponent(updateUser_NewNameField)
+                            .addComponent(updateUser_userBox, 0, 388, Short.MAX_VALUE))
+                        .addGap(143, 143, 143)
+                        .addComponent(updateUser_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(usersUpdate_TabLayout.createSequentialGroup()
+                        .addGap(258, 258, 258)
+                        .addComponent(updateUser_AdminCheckbox)))
+                .addContainerGap(151, Short.MAX_VALUE))
+        );
+        usersUpdate_TabLayout.setVerticalGroup(
+            usersUpdate_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(usersUpdate_TabLayout.createSequentialGroup()
+                .addGap(49, 49, 49)
+                .addComponent(updateUser_userBox, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(usersUpdate_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(usersUpdate_TabLayout.createSequentialGroup()
+                        .addGap(59, 59, 59)
+                        .addComponent(updateUser_NewNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(usersUpdate_TabLayout.createSequentialGroup()
+                        .addGap(98, 98, 98)
+                        .addComponent(updateUser_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(21, 21, 21)
+                .addComponent(updateUser_PasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(80, 80, 80)
+                .addComponent(updateUser_AdminCheckbox)
+                .addContainerGap(135, Short.MAX_VALUE))
+        );
+
+        updateSchema_Tab.addTab("Users", usersUpdate_Tab);
+
+        schemaUpdate_OldNameBox.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Old Name", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
+
+        schemaUpdate_NewNameField.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "New Name", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
+
+        updateSchema_Button.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        updateSchema_Button.setText("Update");
+
+        javax.swing.GroupLayout schemaUpdate_TabLayout = new javax.swing.GroupLayout(schemaUpdate_Tab);
+        schemaUpdate_Tab.setLayout(schemaUpdate_TabLayout);
+        schemaUpdate_TabLayout.setHorizontalGroup(
+            schemaUpdate_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(schemaUpdate_TabLayout.createSequentialGroup()
+                .addGap(125, 125, 125)
+                .addGroup(schemaUpdate_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(schemaUpdate_NewNameField)
+                    .addComponent(schemaUpdate_OldNameBox, 0, 383, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, schemaUpdate_TabLayout.createSequentialGroup()
+                .addContainerGap(621, Short.MAX_VALUE)
+                .addComponent(updateSchema_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(214, 214, 214))
+        );
+        schemaUpdate_TabLayout.setVerticalGroup(
+            schemaUpdate_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(schemaUpdate_TabLayout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addComponent(schemaUpdate_OldNameBox, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(updateSchema_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(schemaUpdate_NewNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(343, Short.MAX_VALUE))
+        );
+
+        updateSchema_Tab.addTab("Schema", schemaUpdate_Tab);
+
+        javax.swing.GroupLayout viewsUpdate_TabLayout = new javax.swing.GroupLayout(viewsUpdate_Tab);
+        viewsUpdate_Tab.setLayout(viewsUpdate_TabLayout);
+        viewsUpdate_TabLayout.setHorizontalGroup(
+            viewsUpdate_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 992, Short.MAX_VALUE)
+        );
+        viewsUpdate_TabLayout.setVerticalGroup(
+            viewsUpdate_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 591, Short.MAX_VALUE)
+        );
+
+        updateSchema_Tab.addTab("Views", viewsUpdate_Tab);
+
+        javax.swing.GroupLayout Update_TabLayout = new javax.swing.GroupLayout(Update_Tab);
+        Update_Tab.setLayout(Update_TabLayout);
+        Update_TabLayout.setHorizontalGroup(
+            Update_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(updateSchema_Tab)
+        );
+        Update_TabLayout.setVerticalGroup(
+            Update_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(updateSchema_Tab)
+        );
+
+        Main_TabbedPane.addTab("Update", Update_Tab);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -540,19 +743,19 @@ public class Main_Screen extends javax.swing.JFrame {
         
         try {
             if (selectedIndex == 0) {
-                dbm.deleteElement(dbm.deleteTable(selectedText));
+                dbm.executeSQLQuery(dbm.deleteTable(selectedText));
             }
             else if (selectedIndex == 1) {
-                dbm.deleteElement(dbm.deleteIndex(selectedText));
+                dbm.executeSQLQuery(dbm.deleteIndex(selectedText));
             }
             else if (selectedIndex == 2) {
-                dbm.deleteElement(dbm.deleteTrigger(selectedText));
+                dbm.executeSQLQuery(dbm.deleteTrigger(selectedText));
             }
             else if (selectedIndex == 3) {
-                dbm.deleteElement(dbm.deleteUser(selectedText));
+                dbm.executeSQLQuery(dbm.deleteUser(selectedText));
             }
             else if (selectedIndex == 4) {
-                dbm.deleteElement(dbm.deleteView(selectedText));
+                dbm.executeSQLQuery(dbm.deleteView(selectedText));
             }
         } catch (Exception e) {
             System.out.println("Error in "
@@ -601,6 +804,117 @@ public class Main_Screen extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_updateButtonMouseClicked
 
+    private void createIndex_TableBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_createIndex_TableBoxItemStateChanged
+        try {
+            dbm.populateComboBox(createIndex_ComboBox, "SELECT COLUMN_NAME  "
+                    + "FROM INFORMATION_SCHEMA.COLUMNS A INNER JOIN "
+                    + "INFORMATION_SCHEMA.TABLES B ON A.TABLE_NAME = B.TABLE_NAME "
+                    + "WHERE A.TABLE_SCHEMA != 'INFORMATION_SCHEMA' "
+                    + "AND A.TABLE_NAME = \'" + createIndex_TableBox
+                            .getSelectedItem().toString() + "\';");
+            
+        }catch(Exception e) {
+            System.out.println("Error when loading components into the Columns "
+                    + "ComboBox.");
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_createIndex_TableBoxItemStateChanged
+
+    private void createView_ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_createView_ButtonMouseClicked
+        String viewName = viewName_InputField.getText();
+        String tableName = createView_comboBox.getSelectedItem().toString();
+        
+        try {
+            dbm.executeSQLQuery(dbm.createView(viewName, tableName));
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_createView_ButtonMouseClicked
+
+    private void createSchema_ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_createSchema_ButtonMouseClicked
+        String schemaName = createSchema_InputField.getText();
+        String username = createSchema_UsernameBox.getSelectedItem().toString();
+        
+        try {
+            dbm.executeSQLQuery(dbm.createSchema(schemaName, username));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_createSchema_ButtonMouseClicked
+
+    private void createTab_SubTabMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_createTab_SubTabMouseClicked
+        String username = createUser_inputField.getText();
+        String password = createUser_PasswordField.getPassword().toString();
+        
+        try {
+            dbm.executeSQLQuery(dbm.createUser(username, password));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_createTab_SubTabMouseClicked
+
+    private void createIndex_ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_createIndex_ButtonMouseClicked
+        String indexName = createIndex_NameField.getText();
+        String tableName = createIndex_TableBox.getSelectedItem().toString();
+        String columnName = createIndex_ComboBox.getSelectedItem().toString();
+        
+        try {
+            dbm.executeSQLQuery(dbm.createIndex(indexName, tableName, columnName));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_createIndex_ButtonMouseClicked
+
+    private void updateIndex_ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updateIndex_ButtonMouseClicked
+        String oldIndexName = updateIndex_ComboBox.getSelectedItem().toString();
+        String newIndexName = updateIndex_NewNameField.getText();
+        
+        try {
+            dbm.executeSQLQuery(dbm.updateIndex(oldIndexName, newIndexName));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_updateIndex_ButtonMouseClicked
+
+    private void updateUser_ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updateUser_ButtonMouseClicked
+        String userName = updateUser_userBox.getSelectedItem().toString();
+        String newUsername = updateUser_NewNameField.getText();
+        String newPassword = updateUser_PasswordField.getPassword().toString();
+        boolean getAdminRights = updateUser_AdminCheckbox.isSelected();
+        
+        try {
+            if (!newUsername.isEmpty()) {
+                dbm.executeSQLQuery(dbm.updateUserRename(userName, newUsername));
+            }
+            if (newUsername.isEmpty() && (!newPassword.isEmpty())) {
+                dbm.executeSQLQuery(dbm.updateUserPassword(userName, newPassword));
+            }
+            else if ((!newUsername.isEmpty()) && (!newPassword.isEmpty())) {
+                dbm.executeSQLQuery(dbm.updateUserPassword(newUsername, newPassword));
+            }
+            if (newUsername.isEmpty()) {
+                dbm.executeSQLQuery(dbm.updateUserAdmin(userName, getAdminRights));
+            }
+            else if(!newUsername.isEmpty()) {
+                dbm.executeSQLQuery(dbm.updateUserAdmin(newUsername, getAdminRights));
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_updateUser_ButtonMouseClicked
+
+    private void updateSchema_TabMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updateSchema_TabMouseClicked
+        String schemaName = schemaUpdate_OldNameBox.getSelectedItem().toString();
+        String newSchemaName = schemaUpdate_NewNameField.getText();
+        
+        try {
+            dbm.executeSQLQuery(dbm.updateSchema(schemaName, newSchemaName));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_updateSchema_TabMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -638,7 +952,6 @@ public class Main_Screen extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Create_Tab;
-    private javax.swing.JPanel DBConnections_Tab;
     private javax.swing.JTable DDLTable;
     private javax.swing.JPanel DDL_Tab;
     private javax.swing.JTabbedPane Main_TabbedPane;
@@ -654,6 +967,7 @@ public class Main_Screen extends javax.swing.JFrame {
     private javax.swing.JPanel Show_Tab;
     private javax.swing.JTable Show_Table;
     private javax.swing.JScrollPane Show_TablePane;
+    private javax.swing.JPanel Update_Tab;
     private javax.swing.JButton createIndex_Button;
     private javax.swing.JComboBox<String> createIndex_ComboBox;
     private javax.swing.JTextField createIndex_NameField;
@@ -673,8 +987,25 @@ public class Main_Screen extends javax.swing.JFrame {
     private javax.swing.JButton createView_Button;
     private javax.swing.JComboBox<String> createView_comboBox;
     private javax.swing.JPanel createViews_Panel;
+    private javax.swing.JPanel indexUpdate_Tab;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextField schemaUpdate_NewNameField;
+    private javax.swing.JComboBox<String> schemaUpdate_OldNameBox;
+    private javax.swing.JPanel schemaUpdate_Tab;
+    private javax.swing.JPanel triggerUpdate_Tab;
     private javax.swing.JButton updateButton;
+    private javax.swing.JButton updateIndex_Button;
+    private javax.swing.JComboBox<String> updateIndex_ComboBox;
+    private javax.swing.JTextField updateIndex_NewNameField;
+    private javax.swing.JButton updateSchema_Button;
+    private javax.swing.JTabbedPane updateSchema_Tab;
+    private javax.swing.JCheckBox updateUser_AdminCheckbox;
+    private javax.swing.JButton updateUser_Button;
+    private javax.swing.JTextField updateUser_NewNameField;
+    private javax.swing.JPasswordField updateUser_PasswordField;
+    private javax.swing.JComboBox<String> updateUser_userBox;
+    private javax.swing.JPanel usersUpdate_Tab;
     private javax.swing.JTextField viewName_InputField;
+    private javax.swing.JPanel viewsUpdate_Tab;
     // End of variables declaration//GEN-END:variables
 }

@@ -2,9 +2,12 @@ package gestor.de.base.de.datos;
 
 import java.awt.Window;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import org.h2.Driver;
@@ -271,9 +274,9 @@ public class Database_Manager {
         return sqlStatement;
     }
     
-    public String deleteSchema() {
+    public String deleteSchema(String schemaName) {
         String sqlStatement = 
-                String.format("DROP SCHEMA %s;");
+                String.format("DROP SCHEMA %s;", schemaName);
         
         return sqlStatement;
     }
@@ -317,11 +320,76 @@ public class Database_Manager {
     
     
     
+
+    //////////////////////////// DDL /////////////////////////////////////
+    
+    
+    /*
+        Tables
+        Indexes
+        Triggers
+        Users & Databases
+        Views
+    */
+    
+    public String showTableDDL(String tableName) {
+        String sqlStatement = 
+                String.format("SCRIPT SIMPLE TABLE %s;", tableName);
+        
+        return sqlStatement;
+    }
+    
+    public String showIndexDDL() {
+        String sqlStatement = 
+                String.format("SCRIPT SIMPLE TABLE %;");
+        
+        return sqlStatement;
+    }
+    
+    public String showTriggerDDL() {
+        String sqlStatement = 
+                String.format("SCRIPT SIMPLE TABLE %;");
+        
+        return sqlStatement;
+    }
+    
+    public String showUsersAndDatabasesDDL(String schemaName) {
+        String sqlStatement = 
+                String.format("SCRIPT SIMPLE SCHEMA %s;", schemaName);
+        
+        return sqlStatement;
+    }
+    
+    public String showViewsDDL() {
+        String sqlStatement = 
+                String.format("SCRIPT SIMPLE TABLE %;");
+        
+        return sqlStatement;
+    }
     
     //////////////////////////////////////////////////////////////////////
     ////////////////// END OF STRING CREATION FUNCTIONS //////////////////
     //////////////////////////////////////////////////////////////////////
     
+    public void populateComboBox(JComboBox CBox, String sqlStatement) throws Exception{
+        statement = conn.prepareStatement(sqlStatement);
+        res = statement.executeQuery();
+
+        ArrayList<String> data = new ArrayList<String>();
+
+        while (res.next()) { 
+            data.add(res.getString(1));
+        }
+
+        // finally turn the array lists into arrays
+        String[] dataArr = new String[data.size()];
+        dataArr = data.toArray(dataArr);
+        
+        CBox.setModel(new DefaultComboBoxModel(dataArr));
+        
+        statement.close();
+        res.close();        
+    }
     
     public void populateTable(JTable mainTable, String sqlStatement) throws Exception {
         Vector<Vector<Object>> data = new Vector<Vector<Object>>();
@@ -352,53 +420,12 @@ public class Database_Manager {
         statement.close();
         res.close();
     } 
-
-
     
-    
-    /*
-    public void populateTable(JTable mainTable, String sqlStatement) throws Exception{
-        
+    public void deleteElement(String sqlStatement) throws Exception {
         statement = conn.prepareStatement(sqlStatement);
-        
-        DefaultTableModel dtm = new DefaultTableModel();      
-        try{
-            res = statement.executeQuery();
-            ResultSetMetaData meta = res.getMetaData();
-            Vector<String> columnNames = new Vector<String>();
-            int numberOfColumns = meta.getColumnCount();
-            for (int column = 1; column <= numberOfColumns; column++) {
-                columnNames.add(meta.getColumnName(column));
-            }
-            while (res.next())
-            {
-                Object [] rowData = new Object[numberOfColumns];
-                for (int i = 0; i < rowData.length; ++i)
-                {
-                    rowData[i] = res.getObject(i+1);
-                }
-                dtm.addRow(rowData);
-            }
-            mainTable.setModel(dtm);
-            dtm.fireTableDataChanged();
-            dtm.fireTableStructureChanged();
-            //////////////////////////
-
-        }
-        catch(Exception e){
-            System.err.println(e);
-            e.printStackTrace();
-        }
-        finally{
-            try{
-                res.close();
-                statement.close();
-            }
-            catch(Exception e){
-                e.printStackTrace();
-            }
-        }
-    }*/
+        statement.executeQuery();
+        statement.close();
+    }
     
     public void createStatement(String sqlStatement) {
         try {

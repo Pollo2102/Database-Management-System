@@ -18,11 +18,13 @@ public class Main_Screen extends javax.swing.JFrame {
     Database_Manager dbm;
     Login_Screen LGS;
     
-    public Main_Screen(Database_Manager D, Login_Screen LG) {
+    public Main_Screen(Database_Manager D, Login_Screen LG) throws Exception{
         initComponents();
         dbm = D;
         LGS = LG;
         this.setVisible(true);
+        dbm.populateComboBox(ShowTableDDL_ComboBox, "SHOW TABLES;");
+        dbm.populateComboBox(ShowSchemaDDL_ComboBox, dbm.showSchema());
     }
 
     /**
@@ -45,17 +47,23 @@ public class Main_Screen extends javax.swing.JFrame {
         ShowTable_Button = new javax.swing.JButton();
         Create_Tab = new javax.swing.JPanel();
         DDL_Tab = new javax.swing.JPanel();
+        ShowTableDDL_ComboBox = new javax.swing.JComboBox<>();
+        ShowSchemaDDL_Button = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        DDLTable = new javax.swing.JTable();
+        ShowSchemaDDL_ComboBox = new javax.swing.JComboBox<>();
+        ShowTableDDL_Button = new javax.swing.JButton();
         DBConnections_Tab = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setSize(new java.awt.Dimension(1000, 650));
 
-        Main_TabbedPane.setForeground(new java.awt.Color(204, 204, 204));
+        Main_TabbedPane.setForeground(new java.awt.Color(51, 51, 51));
         Main_TabbedPane.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         Main_TabbedPane.setName(""); // NOI18N
+        Main_TabbedPane.setOpaque(true);
 
         Show_Tab.setForeground(new java.awt.Color(60, 63, 65));
-        Show_Tab.setOpaque(false);
 
         Show_ComboBox.setMaximumRowCount(7);
         Show_ComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tables", "Indexes", "Triggers", "Users & Databases", "Views" }));
@@ -83,7 +91,6 @@ public class Main_Screen extends javax.swing.JFrame {
             }
         ));
         Show_Table.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        Show_Table.setOpaque(false);
         Show_Table.setRowHeight(30);
         Show_Table.setRowSelectionAllowed(false);
         Show_TablePane.setViewportView(Show_Table);
@@ -93,6 +100,11 @@ public class Main_Screen extends javax.swing.JFrame {
 
         ShowDelete_Button.setText("Delete Entry");
         ShowDelete_Button.setToolTipText("Delete an entry inside the table");
+        ShowDelete_Button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ShowDelete_ButtonMouseClicked(evt);
+            }
+        });
 
         ShowTable_Button.setText("Show Table");
         ShowTable_Button.setToolTipText("If it is a Table, shows the selected table.");
@@ -157,15 +169,72 @@ public class Main_Screen extends javax.swing.JFrame {
 
         Main_TabbedPane.addTab("Create", Create_Tab);
 
+        ShowSchemaDDL_Button.setText("Show Schema");
+        ShowSchemaDDL_Button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ShowSchemaDDL_ButtonMouseClicked(evt);
+            }
+        });
+
+        DDLTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null}
+            },
+            new String [] {
+                "Title 1"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(DDLTable);
+
+        ShowTableDDL_Button.setText("Show Table");
+        ShowTableDDL_Button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ShowTableDDL_ButtonMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout DDL_TabLayout = new javax.swing.GroupLayout(DDL_Tab);
         DDL_Tab.setLayout(DDL_TabLayout);
         DDL_TabLayout.setHorizontalGroup(
             DDL_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 994, Short.MAX_VALUE)
+            .addGroup(DDL_TabLayout.createSequentialGroup()
+                .addGroup(DDL_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(DDL_TabLayout.createSequentialGroup()
+                        .addGap(45, 45, 45)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 889, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(DDL_TabLayout.createSequentialGroup()
+                        .addGap(145, 145, 145)
+                        .addGroup(DDL_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(ShowSchemaDDL_ComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(ShowTableDDL_ComboBox, 0, 417, Short.MAX_VALUE))
+                        .addGap(115, 115, 115)
+                        .addGroup(DDL_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(ShowSchemaDDL_Button, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(ShowTableDDL_Button, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
         DDL_TabLayout.setVerticalGroup(
             DDL_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 618, Short.MAX_VALUE)
+            .addGroup(DDL_TabLayout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addGroup(DDL_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ShowTableDDL_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ShowTableDDL_Button))
+                .addGap(18, 18, 18)
+                .addGroup(DDL_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ShowSchemaDDL_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ShowSchemaDDL_Button))
+                .addGap(52, 52, 52)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(70, Short.MAX_VALUE))
         );
 
         Main_TabbedPane.addTab("DDL", DDL_Tab);
@@ -230,9 +299,72 @@ public class Main_Screen extends javax.swing.JFrame {
             }
             
         } catch (Exception e) {
+            System.out.println("Error in executing a show function!\n");
             e.printStackTrace();
         }
     }//GEN-LAST:event_Show_ButtonMouseClicked
+
+    //Testing Pending
+    private void ShowDelete_ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ShowDelete_ButtonMouseClicked
+        String selectedText = 
+                Show_Table.getValueAt(Show_Table.getSelectedRow(), 0)
+                        .toString();
+        
+        int selectedIndex = Show_ComboBox.getSelectedIndex();
+        
+        try {
+            if (selectedIndex == 0) {
+                dbm.deleteElement(dbm.deleteTable(selectedText));
+            }
+            else if (selectedIndex == 1) {
+                dbm.deleteElement(dbm.deleteIndex(selectedText));
+            }
+            else if (selectedIndex == 2) {
+                dbm.deleteElement(dbm.deleteTrigger(selectedText));
+            }
+            else if (selectedIndex == 3) {
+                dbm.deleteElement(dbm.deleteUser(selectedText));
+            }
+            else if (selectedIndex == 4) {
+                dbm.deleteElement(dbm.deleteView(selectedText));
+            }
+        } catch (Exception e) {
+            System.out.println("Error in "
+                    + "executing a delete function!\n");
+            e.printStackTrace();
+        }
+        
+    }//GEN-LAST:event_ShowDelete_ButtonMouseClicked
+
+    private void ShowSchemaDDL_ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ShowSchemaDDL_ButtonMouseClicked
+        try {
+            dbm.populateTable(DDLTable,
+                    dbm.showUsersAndDatabasesDDL(
+                    ShowSchemaDDL_ComboBox
+                            .getSelectedItem()
+                            .toString()));
+            
+        }catch (Exception e) {
+            System.out.println("Error when populating DDL table. "
+                    + "~Schema variant.");
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_ShowSchemaDDL_ButtonMouseClicked
+
+    private void ShowTableDDL_ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ShowTableDDL_ButtonMouseClicked
+        try {
+            dbm.populateTable(DDLTable,
+                    dbm.showTableDDL(
+                    ShowTableDDL_ComboBox
+                            .getSelectedItem()
+                            .toString()));
+            
+        }catch (Exception e) {
+            System.out.println("Error when populating DDL table. "
+                    + "~Table variant.");
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_ShowTableDDL_ButtonMouseClicked
 
     /**
      * @param args the command line arguments
@@ -272,15 +404,21 @@ public class Main_Screen extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Create_Tab;
     private javax.swing.JPanel DBConnections_Tab;
+    private javax.swing.JTable DDLTable;
     private javax.swing.JPanel DDL_Tab;
     private javax.swing.JTabbedPane Main_TabbedPane;
     private javax.swing.JButton ShowDelete_Button;
     private javax.swing.JButton ShowModify_Button;
+    private javax.swing.JButton ShowSchemaDDL_Button;
+    private javax.swing.JComboBox<String> ShowSchemaDDL_ComboBox;
+    private javax.swing.JButton ShowTableDDL_Button;
+    private javax.swing.JComboBox<String> ShowTableDDL_ComboBox;
     private javax.swing.JButton ShowTable_Button;
     private javax.swing.JButton Show_Button;
     private javax.swing.JComboBox<String> Show_ComboBox;
     private javax.swing.JPanel Show_Tab;
     private javax.swing.JTable Show_Table;
     private javax.swing.JScrollPane Show_TablePane;
+    private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 }

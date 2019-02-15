@@ -144,10 +144,10 @@ public class Database_Manager {
         return sqlStatement;
     }
     
-    public String createIndex(String indexName, String tableName, String fieldName) {
+    public String createIndex(String indexName, String tableName, String columnName) {
         String sqlStatement = 
                 String.format("CREATE INDEX %s ON %s(%s)", 
-                indexName, tableName, fieldName);
+                indexName, tableName, columnName);
         
         return sqlStatement;
     }
@@ -176,9 +176,9 @@ public class Database_Manager {
         return sqlStatement;
     }
     
-    public String createTriggers(String triggerName, String triggerTime, String tableName) {
+    public String createTriggers(String triggerName, String triggerTime, String triggerAction, String tableName) {
         String sqlStatement = 
-                String.format("CREATE TRIGGER %s %s INSERT ON %s FOR EACH ROW CALL \"MyTrigger\"", triggerName, triggerTime, tableName);
+                String.format("CREATE TRIGGER %s %s %s ON %s FOR EACH ROW CALL \'MyTrigger\'", triggerName, triggerTime, triggerAction, tableName);
         
         return sqlStatement;
     }
@@ -292,7 +292,7 @@ public class Database_Manager {
     
     public String createView(String viewName, String tableName) {
         String sqlStatement = 
-                String.format("CREATE VIEW TEST_VIEW AS SELECT * FROM %s", 
+                String.format("CREATE VIEW %s AS SELECT * FROM %s", 
                 viewName, tableName);
 
                 /* String sqlStatement = 
@@ -314,12 +314,6 @@ public class Database_Manager {
         
         return sqlStatement;
     }
-    
-    
-    ////////////////////////// SESSIONS //////////////////////////////////
-    
-    
-    
 
     //////////////////////////// DDL /////////////////////////////////////
     

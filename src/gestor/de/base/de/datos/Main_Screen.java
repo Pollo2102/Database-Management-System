@@ -22,9 +22,24 @@ public class Main_Screen extends javax.swing.JFrame {
         initComponents();
         dbm = D;
         LGS = LG;
+        LGS.setVisible(false);
         this.setVisible(true);
+        initComponentValues();
+    }
+    
+    private void initComponentValues() throws Exception{
         dbm.populateComboBox(ShowTableDDL_ComboBox, "SHOW TABLES;");
         dbm.populateComboBox(ShowSchemaDDL_ComboBox, dbm.showSchema());
+        dbm.populateComboBox(createView_comboBox, "SHOW TABLES;");
+        dbm.populateComboBox(createSchema_UsernameBox, 
+                "SELECT * FROM INFORMATION_SCHEMA.USERS;");
+        dbm.populateComboBox(createIndex_TableBox, "SHOW TABLES;");
+        dbm.populateComboBox(createIndex_ComboBox, "SELECT COLUMN_NAME  "
+                + "FROM INFORMATION_SCHEMA.COLUMNS A INNER JOIN "
+                + "INFORMATION_SCHEMA.TABLES B ON A.TABLE_NAME = B.TABLE_NAME "
+                + "WHERE A.TABLE_SCHEMA != 'INFORMATION_SCHEMA' "
+                + "AND A.TABLE_NAME = " + createIndex_TableBox
+                        .getSelectedItem().toString() + ";");
     }
 
     /**
@@ -45,7 +60,28 @@ public class Main_Screen extends javax.swing.JFrame {
         ShowModify_Button = new javax.swing.JButton();
         ShowDelete_Button = new javax.swing.JButton();
         ShowTable_Button = new javax.swing.JButton();
+        updateButton = new javax.swing.JButton();
         Create_Tab = new javax.swing.JPanel();
+        createTab_SubTab = new javax.swing.JTabbedPane();
+        createTable_Panel = new javax.swing.JPanel();
+        createIndexes_Panel = new javax.swing.JPanel();
+        createIndex_NameField = new javax.swing.JTextField();
+        createIndex_TableBox = new javax.swing.JComboBox<>();
+        createIndex_ComboBox = new javax.swing.JComboBox<>();
+        createIndex_Button = new javax.swing.JButton();
+        createTriggers_Panel = new javax.swing.JPanel();
+        createUsers_Panel = new javax.swing.JPanel();
+        createUser_inputField = new javax.swing.JTextField();
+        createUser_PasswordField = new javax.swing.JPasswordField();
+        createUser_Button = new javax.swing.JButton();
+        createSchema_Panel = new javax.swing.JPanel();
+        createSchema_InputField = new javax.swing.JTextField();
+        createSchema_UsernameBox = new javax.swing.JComboBox<>();
+        createSchema_Button = new javax.swing.JButton();
+        createViews_Panel = new javax.swing.JPanel();
+        viewName_InputField = new javax.swing.JTextField();
+        createView_comboBox = new javax.swing.JComboBox<>();
+        createView_Button = new javax.swing.JButton();
         DDL_Tab = new javax.swing.JPanel();
         ShowTableDDL_ComboBox = new javax.swing.JComboBox<>();
         ShowSchemaDDL_Button = new javax.swing.JButton();
@@ -114,6 +150,13 @@ public class Main_Screen extends javax.swing.JFrame {
             }
         });
 
+        updateButton.setText("UPDATE");
+        updateButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                updateButtonMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout Show_TabLayout = new javax.swing.GroupLayout(Show_Tab);
         Show_Tab.setLayout(Show_TabLayout);
         Show_TabLayout.setHorizontalGroup(
@@ -124,7 +167,9 @@ public class Main_Screen extends javax.swing.JFrame {
                         .addGap(200, 200, 200)
                         .addComponent(Show_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(66, 66, 66)
-                        .addComponent(Show_Button))
+                        .addComponent(Show_Button)
+                        .addGap(84, 84, 84)
+                        .addComponent(updateButton))
                     .addGroup(Show_TabLayout.createSequentialGroup()
                         .addGap(48, 48, 48)
                         .addComponent(Show_TablePane, javax.swing.GroupLayout.PREFERRED_SIZE, 900, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -143,7 +188,8 @@ public class Main_Screen extends javax.swing.JFrame {
                 .addGap(35, 35, 35)
                 .addGroup(Show_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Show_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Show_Button))
+                    .addComponent(Show_Button)
+                    .addComponent(updateButton))
                 .addGap(18, 18, 18)
                 .addComponent(Show_TablePane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
@@ -156,15 +202,195 @@ public class Main_Screen extends javax.swing.JFrame {
 
         Main_TabbedPane.addTab("Show", Show_Tab);
 
+        createTab_SubTab.setForeground(new java.awt.Color(102, 102, 102));
+        createTab_SubTab.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+
+        javax.swing.GroupLayout createTable_PanelLayout = new javax.swing.GroupLayout(createTable_Panel);
+        createTable_Panel.setLayout(createTable_PanelLayout);
+        createTable_PanelLayout.setHorizontalGroup(
+            createTable_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 992, Short.MAX_VALUE)
+        );
+        createTable_PanelLayout.setVerticalGroup(
+            createTable_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 588, Short.MAX_VALUE)
+        );
+
+        createTab_SubTab.addTab("Tables", createTable_Panel);
+
+        createIndex_NameField.setFont(new java.awt.Font("Dialog", 0, 16)); // NOI18N
+        createIndex_NameField.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Index Name", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
+
+        createIndex_TableBox.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        createIndex_TableBox.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Table Name", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
+
+        createIndex_ComboBox.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        createIndex_ComboBox.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Column Name", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
+
+        createIndex_Button.setText("Create");
+
+        javax.swing.GroupLayout createIndexes_PanelLayout = new javax.swing.GroupLayout(createIndexes_Panel);
+        createIndexes_Panel.setLayout(createIndexes_PanelLayout);
+        createIndexes_PanelLayout.setHorizontalGroup(
+            createIndexes_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(createIndexes_PanelLayout.createSequentialGroup()
+                .addGap(145, 145, 145)
+                .addGroup(createIndexes_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(createIndex_ComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(createIndex_TableBox, 0, 406, Short.MAX_VALUE)
+                    .addComponent(createIndex_NameField))
+                .addGap(128, 128, 128)
+                .addComponent(createIndex_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(183, Short.MAX_VALUE))
+        );
+        createIndexes_PanelLayout.setVerticalGroup(
+            createIndexes_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(createIndexes_PanelLayout.createSequentialGroup()
+                .addGap(77, 77, 77)
+                .addComponent(createIndex_NameField, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(65, 65, 65)
+                .addGroup(createIndexes_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(createIndex_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(createIndex_TableBox, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(54, 54, 54)
+                .addComponent(createIndex_ComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(205, Short.MAX_VALUE))
+        );
+
+        createTab_SubTab.addTab("Indexes", createIndexes_Panel);
+
+        javax.swing.GroupLayout createTriggers_PanelLayout = new javax.swing.GroupLayout(createTriggers_Panel);
+        createTriggers_Panel.setLayout(createTriggers_PanelLayout);
+        createTriggers_PanelLayout.setHorizontalGroup(
+            createTriggers_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 992, Short.MAX_VALUE)
+        );
+        createTriggers_PanelLayout.setVerticalGroup(
+            createTriggers_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 588, Short.MAX_VALUE)
+        );
+
+        createTab_SubTab.addTab("Triggers", createTriggers_Panel);
+
+        createUser_inputField.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Username", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
+
+        createUser_PasswordField.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Password", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
+
+        createUser_Button.setText("Create");
+
+        javax.swing.GroupLayout createUsers_PanelLayout = new javax.swing.GroupLayout(createUsers_Panel);
+        createUsers_Panel.setLayout(createUsers_PanelLayout);
+        createUsers_PanelLayout.setHorizontalGroup(
+            createUsers_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(createUsers_PanelLayout.createSequentialGroup()
+                .addGap(150, 150, 150)
+                .addGroup(createUsers_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(createUser_PasswordField, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+                    .addComponent(createUser_inputField))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, createUsers_PanelLayout.createSequentialGroup()
+                .addContainerGap(607, Short.MAX_VALUE)
+                .addComponent(createUser_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(228, 228, 228))
+        );
+        createUsers_PanelLayout.setVerticalGroup(
+            createUsers_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(createUsers_PanelLayout.createSequentialGroup()
+                .addGap(77, 77, 77)
+                .addComponent(createUser_inputField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(3, 3, 3)
+                .addComponent(createUser_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(createUser_PasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(326, Short.MAX_VALUE))
+        );
+
+        createTab_SubTab.addTab("Users", createUsers_Panel);
+
+        createSchema_InputField.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        createSchema_InputField.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Schema Name", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
+
+        createSchema_UsernameBox.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        createSchema_UsernameBox.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Username", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
+
+        createSchema_Button.setText("Create");
+
+        javax.swing.GroupLayout createSchema_PanelLayout = new javax.swing.GroupLayout(createSchema_Panel);
+        createSchema_Panel.setLayout(createSchema_PanelLayout);
+        createSchema_PanelLayout.setHorizontalGroup(
+            createSchema_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(createSchema_PanelLayout.createSequentialGroup()
+                .addGap(165, 165, 165)
+                .addGroup(createSchema_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(createSchema_UsernameBox, 0, 417, Short.MAX_VALUE)
+                    .addComponent(createSchema_InputField))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, createSchema_PanelLayout.createSequentialGroup()
+                .addContainerGap(685, Short.MAX_VALUE)
+                .addComponent(createSchema_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(180, 180, 180))
+        );
+        createSchema_PanelLayout.setVerticalGroup(
+            createSchema_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(createSchema_PanelLayout.createSequentialGroup()
+                .addGap(69, 69, 69)
+                .addComponent(createSchema_InputField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15)
+                .addComponent(createSchema_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
+                .addComponent(createSchema_UsernameBox, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(310, Short.MAX_VALUE))
+        );
+
+        createTab_SubTab.addTab("Schema", createSchema_Panel);
+
+        viewName_InputField.setFont(new java.awt.Font("Dialog", 0, 16)); // NOI18N
+        viewName_InputField.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "View Name", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
+
+        createView_comboBox.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        createView_comboBox.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Table Name", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
+
+        createView_Button.setText("Create");
+
+        javax.swing.GroupLayout createViews_PanelLayout = new javax.swing.GroupLayout(createViews_Panel);
+        createViews_Panel.setLayout(createViews_PanelLayout);
+        createViews_PanelLayout.setHorizontalGroup(
+            createViews_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(createViews_PanelLayout.createSequentialGroup()
+                .addGap(118, 118, 118)
+                .addGroup(createViews_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(viewName_InputField)
+                    .addComponent(createView_comboBox, 0, 316, Short.MAX_VALUE))
+                .addGap(151, 151, 151)
+                .addComponent(createView_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(299, Short.MAX_VALUE))
+        );
+        createViews_PanelLayout.setVerticalGroup(
+            createViews_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(createViews_PanelLayout.createSequentialGroup()
+                .addGroup(createViews_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(createViews_PanelLayout.createSequentialGroup()
+                        .addGap(89, 89, 89)
+                        .addComponent(viewName_InputField, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(createViews_PanelLayout.createSequentialGroup()
+                        .addGap(135, 135, 135)
+                        .addComponent(createView_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(createView_comboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(346, Short.MAX_VALUE))
+        );
+
+        createTab_SubTab.addTab("Views", createViews_Panel);
+
         javax.swing.GroupLayout Create_TabLayout = new javax.swing.GroupLayout(Create_Tab);
         Create_Tab.setLayout(Create_TabLayout);
         Create_TabLayout.setHorizontalGroup(
             Create_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 994, Short.MAX_VALUE)
+            .addComponent(createTab_SubTab)
         );
         Create_TabLayout.setVerticalGroup(
             Create_TabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 618, Short.MAX_VALUE)
+            .addComponent(createTab_SubTab)
         );
 
         Main_TabbedPane.addTab("Create", Create_Tab);
@@ -366,6 +592,15 @@ public class Main_Screen extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_ShowTableDDL_ButtonMouseClicked
 
+    private void updateButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updateButtonMouseClicked
+        try {
+            initComponentValues();
+        } catch (Exception e) {
+            System.out.println("Error when initializing components!");
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_updateButtonMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -419,6 +654,27 @@ public class Main_Screen extends javax.swing.JFrame {
     private javax.swing.JPanel Show_Tab;
     private javax.swing.JTable Show_Table;
     private javax.swing.JScrollPane Show_TablePane;
+    private javax.swing.JButton createIndex_Button;
+    private javax.swing.JComboBox<String> createIndex_ComboBox;
+    private javax.swing.JTextField createIndex_NameField;
+    private javax.swing.JComboBox<String> createIndex_TableBox;
+    private javax.swing.JPanel createIndexes_Panel;
+    private javax.swing.JButton createSchema_Button;
+    private javax.swing.JTextField createSchema_InputField;
+    private javax.swing.JPanel createSchema_Panel;
+    private javax.swing.JComboBox<String> createSchema_UsernameBox;
+    private javax.swing.JTabbedPane createTab_SubTab;
+    private javax.swing.JPanel createTable_Panel;
+    private javax.swing.JPanel createTriggers_Panel;
+    private javax.swing.JButton createUser_Button;
+    private javax.swing.JPasswordField createUser_PasswordField;
+    private javax.swing.JTextField createUser_inputField;
+    private javax.swing.JPanel createUsers_Panel;
+    private javax.swing.JButton createView_Button;
+    private javax.swing.JComboBox<String> createView_comboBox;
+    private javax.swing.JPanel createViews_Panel;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JButton updateButton;
+    private javax.swing.JTextField viewName_InputField;
     // End of variables declaration//GEN-END:variables
 }

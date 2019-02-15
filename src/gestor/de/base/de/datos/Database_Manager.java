@@ -203,7 +203,7 @@ public class Database_Manager {
     public String showUsers_Schema() {
         String sqlStatement = 
                 String.format("SELECT * FROM INFORMATION_SCHEMA.USERS a "
-                        + "inner join information_SCHEMA.SCHEMATA b "
+                        + "left join information_SCHEMA.SCHEMATA b "
                         + "on b.SCHEMA_OWNER = a.NAME;");
         
         return sqlStatement;
@@ -211,7 +211,7 @@ public class Database_Manager {
     
     public String createUser(String username, String password) {
         String sqlStatement = 
-                String.format("CREATE %s GUEST PASSWORD '%s';", 
+                String.format("CREATE USER IF NOT EXISTS %s PASSWORD '%s';", 
                         username, password);
         
         return sqlStatement;
@@ -421,6 +421,11 @@ public class Database_Manager {
         statement.close();
     }
     
+    public void executeSQL(String sqlStatement) throws Exception {
+        statement = conn.prepareStatement(sqlStatement);
+        statement.execute();
+        statement.close();
+    }
     
     
 }

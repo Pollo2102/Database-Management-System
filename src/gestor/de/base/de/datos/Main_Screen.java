@@ -1,5 +1,8 @@
 package gestor.de.base.de.datos;
 
+import java.util.Vector;
+import javax.swing.JTextField;
+
 /**
  *
  * @author diego
@@ -8,6 +11,7 @@ public class Main_Screen extends javax.swing.JFrame {
     
     Database_Manager dbm;
     Login_Screen LGS;
+    Vector<JTextField> tableColumns;
     
     public Main_Screen(Database_Manager D, Login_Screen LG) throws Exception{
         initComponents();
@@ -16,6 +20,7 @@ public class Main_Screen extends javax.swing.JFrame {
         LGS.setVisible(false);
         this.setVisible(true);
         initComponentValues();
+        tableColumns = new Vector<>();
     }
     
     private void initComponentValues() throws Exception{
@@ -138,6 +143,7 @@ public class Main_Screen extends javax.swing.JFrame {
         Show_Table.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         Show_Table.setRowHeight(30);
         Show_Table.setRowSelectionAllowed(false);
+        Show_Table.setSelectionForeground(new java.awt.Color(47, 101, 202));
         Show_TablePane.setViewportView(Show_Table);
 
         ShowModify_Button.setText("Edit");
@@ -213,11 +219,6 @@ public class Main_Screen extends javax.swing.JFrame {
 
         createTab_SubTab.setForeground(new java.awt.Color(102, 102, 102));
         createTab_SubTab.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        createTab_SubTab.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                createTab_SubTabMouseClicked(evt);
-            }
-        });
 
         javax.swing.GroupLayout createTable_PanelLayout = new javax.swing.GroupLayout(createTable_Panel);
         createTable_Panel.setLayout(createTable_PanelLayout);
@@ -301,6 +302,11 @@ public class Main_Screen extends javax.swing.JFrame {
         createUser_PasswordField.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Password", javax.swing.border.TitledBorder.LEFT, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Dialog", 1, 16))); // NOI18N
 
         createUser_Button.setText("Create");
+        createUser_Button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                createUser_ButtonMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout createUsers_PanelLayout = new javax.swing.GroupLayout(createUsers_Panel);
         createUsers_Panel.setLayout(createUsers_PanelLayout);
@@ -501,11 +507,6 @@ public class Main_Screen extends javax.swing.JFrame {
 
         updateSchema_Tab.setFocusable(false);
         updateSchema_Tab.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
-        updateSchema_Tab.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                updateSchema_TabMouseClicked(evt);
-            }
-        });
 
         indexUpdate_Tab.setFont(new java.awt.Font("Dialog", 0, 16)); // NOI18N
 
@@ -625,6 +626,11 @@ public class Main_Screen extends javax.swing.JFrame {
 
         updateSchema_Button.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         updateSchema_Button.setText("Update");
+        updateSchema_Button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                updateSchema_ButtonMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout schemaUpdate_TabLayout = new javax.swing.GroupLayout(schemaUpdate_Tab);
         schemaUpdate_Tab.setLayout(schemaUpdate_TabLayout);
@@ -736,26 +742,42 @@ public class Main_Screen extends javax.swing.JFrame {
     //Testing Pending
     private void ShowDelete_ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ShowDelete_ButtonMouseClicked
         String selectedText = 
-                Show_Table.getValueAt(Show_Table.getSelectedRow(), 0)
+                Show_Table.getValueAt(Show_Table.getSelectedRow(), 2)
                         .toString();
+        int selectedRow = 
+                Show_Table.getSelectedRow();
+        
+        int selectedColumn = 
+                Show_Table.getSelectedColumn();
+        
+        String username = Show_Table.getValueAt(Show_Table.getSelectedRow(), 0)
+                .toString();
+        
+        String schemaName = Show_Table.getValueAt(Show_Table.getSelectedRow(), 5)
+                .toString();
+        
+        System.out.println(selectedText);
         
         int selectedIndex = Show_ComboBox.getSelectedIndex();
         
         try {
             if (selectedIndex == 0) {
-                dbm.executeSQLQuery(dbm.deleteTable(selectedText));
+                dbm.executeSQL(dbm.deleteTable(selectedText));
             }
             else if (selectedIndex == 1) {
-                dbm.executeSQLQuery(dbm.deleteIndex(selectedText));
+                dbm.executeSQL(dbm.deleteIndex(selectedText));
             }
             else if (selectedIndex == 2) {
-                dbm.executeSQLQuery(dbm.deleteTrigger(selectedText));
+                dbm.executeSQL(dbm.deleteTrigger(selectedText));
             }
-            else if (selectedIndex == 3) {
-                dbm.executeSQLQuery(dbm.deleteUser(selectedText));
+            else if (selectedIndex == 3 && selectedColumn == 0) {
+                dbm.executeSQL(dbm.deleteUser(selectedText));
+            }
+            else if (selectedIndex == 3 && selectedColumn == 5) {
+                dbm.executeSQL(dbm.deleteSchema(selectedText));
             }
             else if (selectedIndex == 4) {
-                dbm.executeSQLQuery(dbm.deleteView(selectedText));
+                dbm.executeSQL(dbm.deleteView(selectedText));
             }
         } catch (Exception e) {
             System.out.println("Error in "
@@ -825,7 +847,7 @@ public class Main_Screen extends javax.swing.JFrame {
         String tableName = createView_comboBox.getSelectedItem().toString();
         
         try {
-            dbm.executeSQLQuery(dbm.createView(viewName, tableName));
+            dbm.executeSQL(dbm.createView(viewName, tableName));
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -836,22 +858,11 @@ public class Main_Screen extends javax.swing.JFrame {
         String username = createSchema_UsernameBox.getSelectedItem().toString();
         
         try {
-            dbm.executeSQLQuery(dbm.createSchema(schemaName, username));
+            dbm.executeSQL(dbm.createSchema(schemaName, username));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }//GEN-LAST:event_createSchema_ButtonMouseClicked
-
-    private void createTab_SubTabMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_createTab_SubTabMouseClicked
-        String username = createUser_inputField.getText();
-        String password = createUser_PasswordField.getPassword().toString();
-        
-        try {
-            dbm.executeSQLQuery(dbm.createUser(username, password));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }//GEN-LAST:event_createTab_SubTabMouseClicked
 
     private void createIndex_ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_createIndex_ButtonMouseClicked
         String indexName = createIndex_NameField.getText();
@@ -859,7 +870,7 @@ public class Main_Screen extends javax.swing.JFrame {
         String columnName = createIndex_ComboBox.getSelectedItem().toString();
         
         try {
-            dbm.executeSQLQuery(dbm.createIndex(indexName, tableName, columnName));
+            dbm.executeSQL(dbm.createIndex(indexName, tableName, columnName));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -870,7 +881,7 @@ public class Main_Screen extends javax.swing.JFrame {
         String newIndexName = updateIndex_NewNameField.getText();
         
         try {
-            dbm.executeSQLQuery(dbm.updateIndex(oldIndexName, newIndexName));
+            dbm.executeSQL(dbm.updateIndex(oldIndexName, newIndexName));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -884,19 +895,19 @@ public class Main_Screen extends javax.swing.JFrame {
         
         try {
             if (!newUsername.isEmpty()) {
-                dbm.executeSQLQuery(dbm.updateUserRename(userName, newUsername));
+                dbm.executeSQL(dbm.updateUserRename(userName, newUsername));
             }
             if (newUsername.isEmpty() && (!newPassword.isEmpty())) {
-                dbm.executeSQLQuery(dbm.updateUserPassword(userName, newPassword));
+                dbm.executeSQL(dbm.updateUserPassword(userName, newPassword));
             }
             else if ((!newUsername.isEmpty()) && (!newPassword.isEmpty())) {
-                dbm.executeSQLQuery(dbm.updateUserPassword(newUsername, newPassword));
+                dbm.executeSQL(dbm.updateUserPassword(newUsername, newPassword));
             }
             if (newUsername.isEmpty()) {
-                dbm.executeSQLQuery(dbm.updateUserAdmin(userName, getAdminRights));
+                dbm.executeSQL(dbm.updateUserAdmin(userName, getAdminRights));
             }
             else if(!newUsername.isEmpty()) {
-                dbm.executeSQLQuery(dbm.updateUserAdmin(newUsername, getAdminRights));
+                dbm.executeSQL(dbm.updateUserAdmin(newUsername, getAdminRights));
             }
             
         } catch (Exception e) {
@@ -904,16 +915,27 @@ public class Main_Screen extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_updateUser_ButtonMouseClicked
 
-    private void updateSchema_TabMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updateSchema_TabMouseClicked
+    private void createUser_ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_createUser_ButtonMouseClicked
+        String username = createUser_inputField.getText();
+        String password = createUser_PasswordField.getPassword().toString();
+        
+        try {
+            dbm.executeSQL(dbm.createUser(username, password));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_createUser_ButtonMouseClicked
+
+    private void updateSchema_ButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_updateSchema_ButtonMouseClicked
         String schemaName = schemaUpdate_OldNameBox.getSelectedItem().toString();
         String newSchemaName = schemaUpdate_NewNameField.getText();
         
         try {
-            dbm.executeSQLQuery(dbm.updateSchema(schemaName, newSchemaName));
+            dbm.executeSQL(dbm.updateSchema(schemaName, newSchemaName));
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }//GEN-LAST:event_updateSchema_TabMouseClicked
+    }//GEN-LAST:event_updateSchema_ButtonMouseClicked
 
     /**
      * @param args the command line arguments
